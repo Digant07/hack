@@ -8,12 +8,16 @@ import {
   ScrollView,
   Image,
   ToastAndroid,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 import { categoryData } from './[category]';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { auth } from '../../config/firebaseconfig';
 
 const URGENCY_LEVELS = [
   { id: 'low', label: 'Low', color: '#4CAF50' },
@@ -30,6 +34,7 @@ export default function NewComplaint() {
   const [location, setLocation] = useState('');
   const [urgency, setUrgency] = useState('medium');
   const [images, setImages] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categoryInfo = categoryData[category];
   const subcategoryInfo = categoryInfo?.subcategories.find(s => s.id === subcategory);
@@ -55,24 +60,72 @@ export default function NewComplaint() {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  const uploadImage = async (uri) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      
+      const storage = getStorage();
+      const filename = uri.substring(uri.lastIndexOf('/') + 1);
+      const storageRef = ref(storage, `complaints/${auth.currentUser.uid}/${filename}`);
+      
+      await uploadBytes(storageRef, blob);
+      const downloadURL = await getDownloadURL(storageRef);
+      return downloadURL;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async () => {
     if (!title.trim() || !description.trim() || !location.trim()) {
       ToastAndroid.show('Please fill all required fields', ToastAndroid.SHORT);
       return;
     }
-    
-    // Here you would typically send the data to your backend
-    console.log({
-      title,
-      description,
-      location,
-      images,
-      category,
-      subcategory
-    });
 
-    ToastAndroid.show('Complaint submitted successfully', ToastAndroid.SHORT);
-    router.back();
+    if (!auth.currentUser) {
+      ToastAndroid.show('Please sign in to submit a complaint', ToastAndroid.SHORT);
+      router.push('/login');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Upload images first
+      const imageUrls = await Promise.all(
+        images.map(image => uploadImage(image.uri))
+      );
+
+      // Prepare complaint data
+      const complaintData = {
+        title: title.trim(),
+        description: description.trim(),
+        location: location.trim(),
+        urgency,
+        category,
+        subcategory,
+        imageUrls,
+        status: 'pending',
+        userId: auth.currentUser.uid,
+        userEmail: auth.currentUser.email,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+
+      // Add to Firestore
+      const db = getFirestore();
+      await addDoc(collection(db, 'complaints'), complaintData);
+
+      ToastAndroid.show('Complaint submitted successfully', ToastAndroid.SHORT);
+      router.back();
+    } catch (error) {
+      console.error('Error submitting complaint:', error);
+      ToastAndroid.show('Error submitting complaint. Please try again.', ToastAndroid.SHORT);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!categoryInfo || !subcategoryInfo) {
@@ -183,8 +236,16 @@ export default function NewComplaint() {
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit Complaint</Text>
+        <TouchableOpacity 
+          style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.submitButtonText}>Submit Complaint</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -333,5 +394,8 @@ const styles = StyleSheet.create({
   },
   urgencyTextSelected: {
     color: '#fff',
+  },
+  submitButtonDisabled: {
+    opacity: 0.7,
   },
 }); 
