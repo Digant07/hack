@@ -1,127 +1,175 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ToastAndroid, Image, SafeAreaView } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { auth } from "../../config/firebaseconfig"; 
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function SignUp() {
   const router = useRouter();
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const OnCreateAccount = () => {
-    if (email === '' || password === '') {
+    if (email === '' || password === '' || fullName === '') {
       ToastAndroid.show('Please fill all details', ToastAndroid.BOTTOM);
-      
+      return;
     }
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed up
         const user = userCredential.user;
         console.log(user);
         router.push('/(tabs)/Home');
-        // ...
       })
       .catch((error) => {
         const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode);
         if (errorCode === 'auth/email-already-in-use') {
           ToastAndroid.show('Email already in use', ToastAndroid.BOTTOM);
-         
         }
-        // ..
       });
   };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={styles.textheader}>Create Your Account</Text>
-      <Text style={styles.subTextheader}>Join Us Today</Text>
-      <View style={{ marginTop: 25 }}>
-        <Text>Full Name</Text>
-        <TextInput placeholder='Enter your full name' style={styles.input} />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Image 
+            source={require('../../assets/images/icon.png')} 
+            style={styles.logo}
+          />
+          <Text style={styles.textheader}>Create Account</Text>
+          <Text style={styles.subTextheader}>Join our community today</Text>
+        </View>
+
+        <View style={styles.form}>
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Full Name</Text>
+            <TextInput 
+              placeholder='Enter your full name' 
+              style={styles.input}
+              value={fullName}
+              onChangeText={setFullName}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              placeholder='Enter your email'
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              placeholder='Enter your password'
+              secureTextEntry={true}
+              style={styles.input}
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={OnCreateAccount}>
+            <Text style={styles.buttonText}>Create Account</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Already have an account?</Text>
+          <TouchableOpacity onPress={() => router.push('/login/signIn')}>
+            <Text style={styles.footerLink}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={{ marginTop: 25 }}>
-        <Text>Email</Text>
-        <TextInput
-          placeholder='Enter your email'
-          style={styles.input}
-          value={email}
-          onChangeText={(value) => setEmail(value)}
-        />
-      </View>
-      <View style={{ marginTop: 25 }}>
-        <Text>Password</Text>
-        <TextInput
-          placeholder='Enter your password'
-          secureTextEntry={true}
-          style={styles.input}
-          value={password}
-          onChangeText={(value) => setPassword(value)}
-        />
-      </View>
-      <TouchableOpacity style={styles.button} onPress={OnCreateAccount}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push('/login/signIn')} style={styles.buttonCreate}>
-        <Text style={styles.buttontext}>Already have an account? Sign In</Text>
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'space-between',
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
+    borderRadius: 40,
+  },
   textheader: {
-    fontSize: 25,
+    fontSize: 28,
     fontWeight: '900',
-    marginTop: 15,
+    color: '#1666a8',
+    marginTop: 10,
   },
   subTextheader: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 10,
-    color: '#D3D3D3',
-  },
-  subheader: {
     fontSize: 16,
-    marginTop: 5,
-    color: '#808080',
+    marginTop: 4,
+    color: '#666',
+  },
+  form: {
+    marginTop: 20,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 8,
+    fontWeight: '500',
   },
   input: {
-    height: 40,
-    padding: 10,
-    borderRadius: 5,
+    height: 50,
+    borderRadius: 12,
     fontSize: 16,
-    borderColor: '#000',
+    borderColor: '#ddd',
     borderWidth: 1,
-    marginTop: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     backgroundColor: '#fff',
   },
   button: {
+    height: 50,
+    backgroundColor: '#1666a8',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: 20,
-    padding: 20,
-    backgroundColor: '#28A745',
-    borderRadius: 5,
   },
   buttonText: {
-    textAlign: 'center',
     color: '#fff',
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '600',
   },
-  buttontext: {
-    textAlign: 'center',
-    color: '#28A745',
-    fontWeight: 'bold',
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  buttonCreate: {
-    backgroundColor: '#fff',
-    marginTop: 20,
-    padding: 20,
-    borderRadius: 5,
-    borderColor: '#28A745',
-    borderWidth: 1,
+  footerText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  footerLink: {
+    color: '#1666a8',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 5,
   },
 });

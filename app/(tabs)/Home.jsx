@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {
   View,
   Text,
@@ -9,13 +8,17 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
-  PanResponder
+  PanResponder,
+  ScrollView
 } from "react-native";
-
+import { MaterialCommunityIcons, MaterialIcons, FontAwesome5, Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const CARD_WIDTH = SCREEN_WIDTH - 30; // Card width with margins
 
 const HomeScreen = () => {
+  const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Event cards data
@@ -40,15 +43,70 @@ const HomeScreen = () => {
     },
   ];
 
-  // Service categories
+  // Main complaint categories with icons
   const services = [
-    "Bills",
-    "Mobile",
-    "Driving",
-    "Housing",
-    "Residency",
-    "Health",
+    {
+      id: "public-services",
+      name: "Public Services",
+      icon: <MaterialIcons name="public" size={32} color="#FFFFFF" />,
+      color: "#4CAF50"
+    },
+    {
+      id: "consumer",
+      name: "Consumer Issues",
+      icon: <MaterialCommunityIcons name="shopping" size={32} color="#FFFFFF" />,
+      color: "#2196F3"
+    },
+    {
+      id: "government",
+      name: "Government",
+      icon: <MaterialIcons name="account-balance" size={32} color="#FFFFFF" />,
+      color: "#9C27B0"
+    },
+    {
+      id: "workplace",
+      name: "Workplace",
+      icon: <MaterialIcons name="work" size={32} color="#FFFFFF" />,
+      color: "#FF5722"
+    },
+
+    {
+      id: "healthcare",
+      name: "Healthcare",
+      icon: <MaterialCommunityIcons name="hospital-box" size={32} color="#FFFFFF" />,
+      color: "#E91E63"
+    },
+    {
+      id: "housing",
+      name: "Housing & Property",
+      icon: <MaterialCommunityIcons name="home-city" size={32} color="#FFFFFF" />,
+      color: "#795548"
+    },
+    {
+      id: "financial",
+      name: "Financial & Banking",
+      icon: <MaterialCommunityIcons name="bank" size={32} color="#FFFFFF" />,
+      color: "#607D8B"
+    },
+    {
+      id: "education",
+      name: "Education",
+      icon: <MaterialCommunityIcons name="school" size={32} color="#FFFFFF" />,
+      color: "#FF9800"
+    },
+    {
+      id: "cybercrime",
+      name: "Cybercrime",
+      icon: <MaterialCommunityIcons name="shield-lock" size={32} color="#FFFFFF" />,
+      color: "#F44336"
+    }
   ];
+
+  const getItemLayout = (data, index) => ({
+    length: CARD_WIDTH,
+    offset: CARD_WIDTH * index,
+    index,
+  });
 
   // PanResponder for swipe handling
   const panResponder = PanResponder.create({
@@ -62,6 +120,20 @@ const HomeScreen = () => {
     },
   });
 
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50
+  };
+
+  const onViewableItemsChanged = React.useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      setActiveIndex(viewableItems[0].index);
+    }
+  }).current;
+
+  const handleServicePress = (serviceId) => {
+    router.push(`/complaints/${serviceId}`);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header Section */}
@@ -71,64 +143,69 @@ const HomeScreen = () => {
         </Text>
       </View>
 
-      {/* Swipeable Event Cards */}
-      <View style={styles.eventContainer} {...panResponder.panHandlers}>
-        <FlatList
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          data={eventCards}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.eventCard}>
-              <Image source={item.image} style={styles.cardImage} />
-              {/* Text container inside but fixed positioned */}
-              <View style={styles.eventTextContainer}>
-                <Text style={styles.eventTitle}>
-                  {eventCards[activeIndex]?.title}
-                </Text>
-                <Text style={styles.eventDate}>
-                  {eventCards[activeIndex]?.date}
-                </Text>
+      <ScrollView style={styles.scrollView}>
+        {/* Event Cards Section - Moved to top */}
+        <Text style={styles.sectionTitle}>Recent Updates</Text>
+        <View style={styles.eventContainer}>
+          <FlatList
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            data={eventCards}
+            keyExtractor={(item) => item.id}
+            snapToInterval={CARD_WIDTH}
+            decelerationRate="fast"
+            getItemLayout={getItemLayout}
+            viewabilityConfig={viewabilityConfig}
+            onViewableItemsChanged={onViewableItemsChanged}
+            renderItem={({ item }) => (
+              <View style={styles.eventCard}>
+                <Image source={item.image} style={styles.cardImage} />
+                <View style={styles.eventTextContainer}>
+                  <Text style={styles.eventTitle}>
+                    {item.title}
+                  </Text>
+                  <Text style={styles.eventDate}>
+                    {item.date}
+                  </Text>
+                </View>
               </View>
-            </View>
-          )}
-          onMomentumScrollEnd={(e) => {
-            const index = Math.round(
-              e.nativeEvent.contentOffset.x / SCREEN_WIDTH
-            );
-            setActiveIndex(index);
-          }}
-        />
-      </View>
-
-      {/* Pagination Dots */}
-      <View style={styles.pagination}>
-        {eventCards.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.dot,
-              {
-                backgroundColor: index === activeIndex ? "#FF6B00" : "#D9D9D9",
-              },
-            ]}
+            )}
           />
-        ))}
-      </View>
 
-      {/* Service Categories - 3 Circles per Row */}
-      <Text style={styles.sectionTitle}>Service Categories</Text>
-      <View style={styles.servicesContainer}>
-        {services.map((service, index) => (
-          <View key={index} style={styles.circleContainer}>
-            <TouchableOpacity style={styles.circle}>
-              {/* Add your icon component here */}
-            </TouchableOpacity>
-            <Text style={styles.serviceText}>{service}</Text>
+          {/* Pagination Dots */}
+          <View style={styles.pagination}>
+            {eventCards.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  {
+                    backgroundColor: index === activeIndex ? "#FF6B00" : "#D9D9D9",
+                  },
+                ]}
+              />
+            ))}
           </View>
-        ))}
-      </View>
+        </View>
+
+        {/* Service Categories */}
+        <Text style={styles.sectionTitle}>Complaint Categories</Text>
+        <View style={styles.servicesContainer}>
+          {services.map((service, index) => (
+            <TouchableOpacity 
+              key={index} 
+              style={styles.circleContainer}
+              onPress={() => handleServicePress(service.id)}
+            >
+              <View style={[styles.circle, { backgroundColor: service.color }]}>
+                {service.icon}
+              </View>
+              <Text style={styles.serviceText}>{service.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -154,20 +231,24 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     color: "#3a9874",
   },
+  scrollView: {
+    flex: 1,
+  },
   eventContainer: {
-    height: 280, 
-    marginTop: 12,
-    position: 'relative',
+    height: 260,
+    marginTop: 8,
+    marginBottom: 16,
   },
   eventCard: {
-    width: SCREEN_WIDTH - 30,
-    height: 260, // Keep this as is
+    width: CARD_WIDTH,
+    height: 240,
     borderRadius: 16,
     overflow: "hidden",
     marginHorizontal: 15,
   },
   cardImage: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
     resizeMode: "cover",
   },
   eventTextContainer: {
@@ -175,67 +256,75 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: "rgba(0,0,0,1)", // Adjust alpha (0.5 = 50% transparency)
-    padding: 8, // Remove opacity here!
+    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 16,
   },
   eventTitle: {
-    color: "#3a9874",
+    color: "#FFFFFF",
     fontSize: 20,
-    fontWeight: 700,
-    opacity: 1,
+    fontWeight: "700",
   },
   eventDate: {
-    color: "#1666a8",
-    fontWeight: 600,
+    color: "#FFFFFF",
+    fontWeight: "600",
     fontSize: 16,
-    marginTop: 0,
-    opacity: 2,
+    marginTop: 4,
   },
   pagination: {
     flexDirection: "row",
     justifyContent: "center",
-    margin: 1,
-    marginTop:0,
+    marginTop: 8,
   },
   dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginHorizontal: 5, // Only horizontal spacing between dots
-    marginTop: 0, // Ensure no extra top margin
-    marginBottom: 0, // Ensure no extra bottom margin
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: "600",
     color: "#333333",
-    margin: 10,
-    marginBottom: 16,
+    marginHorizontal: 15,
+    marginTop: 16,
+    marginBottom: 12,
   },
   servicesContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 10,
+    marginTop: 8,
   },
   circleContainer: {
-    width: "30%",
-    alignItems: "center",
-    marginBottom: 20,
+    width: '30%',
+    alignItems: 'center',
+    marginBottom: 24,
+    paddingHorizontal: 8,
   },
   circle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#FF6B00",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   serviceText: {
-    color: "#333",
-    fontSize: 14,
-    textAlign: "center",
+    color: '#333',
+    fontSize: 13,
+    textAlign: 'center',
+    fontWeight: '500',
+    lineHeight: 18,
+    maxWidth: 120,
   },
 });
 
