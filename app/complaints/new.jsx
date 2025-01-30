@@ -91,6 +91,10 @@ export default function NewComplaint() {
             <MaterialIcons name="arrow-back" size={24} color="#333" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>New Complaint</Text>
+          <View style={styles.categoryInfo}>
+            <MaterialIcons name={subcategoryInfo?.icon} size={24} color="#1666a8" />
+            <Text style={styles.categoryText}>{subcategoryInfo?.title}</Text>
+          </View>
         </View>
 
         <View style={styles.form}>
@@ -196,20 +200,35 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
   },
   backButton: {
     padding: 8,
+    alignSelf: 'flex-start',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '600',
-    marginLeft: 16,
     color: '#333',
+    marginLeft: 8,
+    marginBottom: 8,
+  },
+  categoryInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F7FF',
+    padding: 8,
+    borderRadius: 8,
+    marginLeft: 8,
+  },
+  categoryText: {
+    fontSize: 16,
+    color: '#1666a8',
+    marginLeft: 8,
+    fontWeight: '500',
   },
   form: {
     padding: 16,

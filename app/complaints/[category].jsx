@@ -17,11 +17,36 @@ export const categoryData = {
     color: '#4CAF50',
     icon: 'public',
     subcategories: [
-      { id: 'roads', title: 'Roads & Infrastructure', description: 'Potholes, Streetlights, Drainage Issues' },
-      { id: 'water', title: 'Water Supply & Sewage', description: 'Water Supply Issues, Sewage Problems' },
-      { id: 'electricity', title: 'Electricity Issues', description: 'Power Cuts, Faulty Meters' },
-      { id: 'waste', title: 'Waste Management', description: 'Garbage Collection, Dumping' },
-      { id: 'transport', title: 'Public Transport', description: 'Delays, Mismanagement' }
+      { 
+        id: 'roads', 
+        title: 'Roads & Infrastructure', 
+        description: 'Potholes, Streetlights, Drainage Issues',
+        icon: 'construction'
+      },
+      { 
+        id: 'water', 
+        title: 'Water Supply & Sewage', 
+        description: 'Water Supply Issues, Sewage Problems',
+        icon: 'water-drop'
+      },
+      { 
+        id: 'electricity', 
+        title: 'Electricity Issues', 
+        description: 'Power Cuts, Faulty Meters',
+        icon: 'electrical-services'
+      },
+      { 
+        id: 'waste', 
+        title: 'Waste Management', 
+        description: 'Garbage Collection, Dumping',
+        icon: 'delete'
+      },
+      { 
+        id: 'transport', 
+        title: 'Public Transport', 
+        description: 'Delays, Mismanagement',
+        icon: 'directions-bus'
+      }
     ]
   },
   'consumer': {
