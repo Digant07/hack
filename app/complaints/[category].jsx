@@ -54,10 +54,10 @@ export const categoryData = {
     color: '#2196F3',
     icon: 'shopping-cart',
     subcategories: [
-      { id: 'product', title: 'Product Quality', description: 'Defective Products, False Advertising' },
-      { id: 'service', title: 'Service Quality', description: 'Poor Service, Contract Issues' },
-      { id: 'pricing', title: 'Pricing Issues', description: 'Overcharging, Hidden Fees' },
-      { id: 'delivery', title: 'Delivery Problems', description: 'Late Delivery, Wrong Items' }
+      { id: 'product', title: 'Product Quality', description: 'Defective Products, False Advertising', icon: 'inventory-2' },
+      { id: 'service', title: 'Service Quality', description: 'Poor Service, Contract Issues', icon: 'support-agent' },
+      { id: 'pricing', title: 'Pricing Issues', description: 'Overcharging, Hidden Fees', icon: 'attach-money' },
+      { id: 'delivery', title: 'Delivery Problems', description: 'Late Delivery, Wrong Items', icon: 'local-shipping' }
     ]
   },
   'government': {
@@ -65,9 +65,9 @@ export const categoryData = {
     color: '#9C27B0',
     icon: 'account-balance',
     subcategories: [
-      { id: 'documents', title: 'Document Services', description: 'ID Cards, Certificates, Licenses' },
-      { id: 'schemes', title: 'Government Schemes', description: 'Benefits, Subsidies' },
-      { id: 'corruption', title: 'Corruption', description: 'Bribery, Misuse of Power' }
+      { id: 'documents', title: 'Document Services', description: 'ID Cards, Certificates, Licenses', icon: 'description' },
+      { id: 'schemes', title: 'Government Schemes', description: 'Benefits, Subsidies', icon: 'policy' },
+      { id: 'corruption', title: 'Corruption', description: 'Bribery, Misuse of Power', icon: 'gavel' }
     ]
   },
   'workplace': {
@@ -75,9 +75,9 @@ export const categoryData = {
     color: '#FF5722',
     icon: 'work',
     subcategories: [
-      { id: 'harassment', title: 'Workplace Harassment', description: 'Bullying, Discrimination' },
-      { id: 'salary', title: 'Salary Issues', description: 'Delayed Payment, Incorrect Deductions' },
-      { id: 'safety', title: 'Safety Concerns', description: 'Unsafe Conditions, Health Hazards' }
+      { id: 'harassment', title: 'Workplace Harassment', description: 'Bullying, Discrimination', icon: 'warning' },
+      { id: 'salary', title: 'Salary Issues', description: 'Delayed Payment, Incorrect Deductions', icon: 'payments' },
+      { id: 'safety', title: 'Safety Concerns', description: 'Unsafe Conditions, Health Hazards', icon: 'health-and-safety' }
     ]
   },
   'healthcare': {
@@ -85,9 +85,9 @@ export const categoryData = {
     color: '#E91E63',
     icon: 'local-hospital',
     subcategories: [
-      { id: 'treatment', title: 'Medical Treatment', description: 'Quality of Care, Malpractice' },
-      { id: 'billing', title: 'Hospital Billing', description: 'Overcharging, Insurance Issues' },
-      { id: 'facilities', title: 'Hospital Facilities', description: 'Cleanliness, Equipment' }
+      { id: 'treatment', title: 'Medical Treatment', description: 'Quality of Care, Malpractice', icon: 'medical-services' },
+      { id: 'billing', title: 'Hospital Billing', description: 'Overcharging, Insurance Issues', icon: 'receipt-long' },
+      { id: 'facilities', title: 'Hospital Facilities', description: 'Cleanliness, Equipment', icon: 'cleaning-services' }
     ]
   },
   'housing': {
@@ -95,9 +95,9 @@ export const categoryData = {
     color: '#795548',
     icon: 'home',
     subcategories: [
-      { id: 'maintenance', title: 'Maintenance Issues', description: 'Repairs, Services' },
-      { id: 'rent', title: 'Rental Issues', description: 'Disputes, Illegal Practices' },
-      { id: 'construction', title: 'Construction Quality', description: 'Building Issues, Safety' }
+      { id: 'maintenance', title: 'Maintenance Issues', description: 'Repairs, Services', icon: 'build' },
+      { id: 'rent', title: 'Rental Issues', description: 'Disputes, Illegal Practices', icon: 'real-estate-agent' },
+      { id: 'construction', title: 'Construction Quality', description: 'Building Issues, Safety', icon: 'architecture' }
     ]
   },
   'financial': {
@@ -105,9 +105,9 @@ export const categoryData = {
     color: '#607D8B',
     icon: 'account-balance-wallet',
     subcategories: [
-      { id: 'banking', title: 'Banking Services', description: 'Account Issues, Services' },
-      { id: 'fraud', title: 'Financial Fraud', description: 'Scams, Unauthorized Transactions' },
-      { id: 'loans', title: 'Loan Issues', description: 'EMI, Interest Rates' }
+      { id: 'banking', title: 'Banking Services', description: 'Account Issues, Services', icon: 'account-balance' },
+      { id: 'fraud', title: 'Financial Fraud', description: 'Scams, Unauthorized Transactions', icon: 'security' },
+      { id: 'loans', title: 'Loan Issues', description: 'EMI, Interest Rates', icon: 'request-quote' }
     ]
   },
   'education': {
@@ -115,9 +115,9 @@ export const categoryData = {
     color: '#FF9800',
     icon: 'school',
     subcategories: [
-      { id: 'fees', title: 'Fee Related', description: 'Fee Structure, Refunds' },
-      { id: 'quality', title: 'Education Quality', description: 'Teaching Standards, Facilities' },
-      { id: 'admission', title: 'Admission Issues', description: 'Process, Documentation' }
+      { id: 'fees', title: 'Fee Related', description: 'Fee Structure, Refunds', icon: 'payments' },
+      { id: 'quality', title: 'Education Quality', description: 'Teaching Standards, Facilities', icon: 'auto-stories' },
+      { id: 'admission', title: 'Admission Issues', description: 'Process, Documentation', icon: 'how-to-reg' }
     ]
   },
   'cybercrime': {
@@ -125,9 +125,9 @@ export const categoryData = {
     color: '#F44336',
     icon: 'security',
     subcategories: [
-      { id: 'online-fraud', title: 'Online Fraud', description: 'Phishing, Identity Theft' },
-      { id: 'cyberbullying', title: 'Cyberbullying', description: 'Harassment, Threats' },
-      { id: 'data-breach', title: 'Data Privacy', description: 'Data Leaks, Unauthorized Access' }
+      { id: 'online-fraud', title: 'Online Fraud', description: 'Phishing, Identity Theft', icon: 'phishing' },
+      { id: 'cyberbullying', title: 'Cyberbullying', description: 'Harassment, Threats', icon: 'block' },
+      { id: 'data-breach', title: 'Data Privacy', description: 'Data Leaks, Unauthorized Access', icon: 'privacy-tip' }
     ]
   }
 };
@@ -172,7 +172,7 @@ export default function Category() {
             })}
           >
             <View style={[styles.cardIcon, { backgroundColor: categoryInfo.color }]}>
-              <MaterialIcons name={categoryInfo.icon} size={24} color="#FFF" />
+              <MaterialIcons name={subcategory.icon} size={24} color="#FFF" />
             </View>
             <View style={styles.cardContent}>
               <Text style={styles.cardTitle}>{subcategory.title}</Text>
